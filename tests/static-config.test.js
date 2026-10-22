@@ -8,8 +8,7 @@ test('every static file in public/ bypasses the redirect function', () => {
     if (file.startsWith('_')) continue;
     assert.ok(routes.exclude.includes(`/${file}`), `/${file} must be excluded in public/_routes.json`);
   }
-  for (const needed of ['/', '/assets/*']) assert.ok(routes.exclude.includes(needed), needed);
-  for (const guarded of ['/admin', '/admin/*']) assert.ok(!routes.exclude.includes(guarded), `${guarded} must reach the function so it can be password protected`);
+  for (const needed of ['/', '/admin', '/admin/*', '/assets/*']) assert.ok(routes.exclude.includes(needed), needed);
   assert.deepEqual(routes.include, ['/*']);
 });
 test('security headers are configured', () => {

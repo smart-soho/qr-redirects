@@ -1,12 +1,6 @@
 import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { onRequest, clearKeyCache } from '../functions/[[path]].js';
-
-const b64 = input => Buffer.from(input).toString('base64url');
-const { publicKey, privateKey } = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
-const jwk = { ...(await crypto.subtle.exportKey('jwk', publicKey)), kid: 'k1' };
-const signing = `${b64(JSON.stringify({ alg: 'RS256', kid: 'k1' }))}.${b64(JSON.stringify({ iss: 'https://t.cloudflareaccess.com', aud: ['a'], exp: Date.now() / 1000 + 600, email: 'staff@smartsoho.co.uk' }))}`;
-const jwt = `${signing}.${Buffer.from(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', privateKey, new TextEncoder().encode(signing))).toString('base64url')}`;
+import { onRequest } from '../functions/[[path]].js';
 
 let statements, failBatch;
 const db = {
@@ -15,12 +9,11 @@ const db = {
 };
 const valid = { name: 'Spring', target: 'https://example.com', path: 'spring', foreground: '#111827', background: '#FFFFFF' };
 const call = (method, path, body) => onRequest({
-  request: new Request(`https://smartqr.uk${path}`, { method, headers: { 'Cf-Access-Jwt-Assertion': jwt, origin: 'https://smartqr.uk', 'content-type': 'application/json' }, body: body && JSON.stringify(body) }),
-  env: { DB: db, ACCESS_TEAM_DOMAIN: 't.cloudflareaccess.com', ACCESS_AUD: 'a' }, next: () => { throw Error('unexpected'); }
+  request: new Request(`https://smartqr.uk${path}`, { method, headers: { 'Cf-Access-Authenticated-User-Email': 'staff@smartsoho.co.uk', origin: 'https://smartqr.uk', 'content-type': 'application/json' }, body: body && JSON.stringify(body) }),
+  env: { DB: db }, next: () => { throw Error('unexpected'); }
 });
 beforeEach(() => {
-  clearKeyCache(); statements = []; failBatch = false;
-  globalThis.fetch = async () => Response.json({ keys: [jwk] });
+  statements = []; failBatch = false;
 });
 
 test('creating a link records who made it and writes history in one batch', async () => {
@@ -52,8 +45,8 @@ test('reserved links, inverted colours and bad destinations are rejected with cl
 });
 test('cross-origin writes are refused', async () => {
   const response = await onRequest({
-    request: new Request('https://smartqr.uk/api/links', { method: 'POST', headers: { 'Cf-Access-Jwt-Assertion': jwt, origin: 'https://evil.example', 'content-type': 'application/json' }, body: JSON.stringify(valid) }),
-    env: { DB: db, ACCESS_TEAM_DOMAIN: 't.cloudflareaccess.com', ACCESS_AUD: 'a' }
+    request: new Request('https://smartqr.uk/api/links', { method: 'POST', headers: { origin: 'https://evil.example', 'content-type': 'application/json' }, body: JSON.stringify(valid) }),
+    env: { DB: db }
   });
   assert.equal(response.status, 403);
 });

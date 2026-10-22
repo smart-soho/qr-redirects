@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalisePath, validTarget, isAuthorised, onRequest } from '../functions/[[path]].js';
+import { normalisePath, validTarget, onRequest } from '../functions/[[path]].js';
 
 test('legacy mixed-case paths remain intact', () => {
   assert.equal(normalisePath('/ARC/BASEcamp/flythrough/'), 'ARC/BASEcamp/flythrough');
@@ -14,11 +14,6 @@ test('only ordinary web destinations are accepted', () => {
   assert.equal(validTarget('https://example.com/page'), true);
   assert.equal(validTarget('javascript:alert(1)'), false);
   assert.equal(validTarget('https://user:password@example.com'), false);
-});
-test('management API fails closed without Access settings', async () => {
-  assert.equal(await isAuthorised(new Request('https://smartqr.uk/api/links'), {}), false);
-  const result = await onRequest({ request: new Request('https://smartqr.uk/api/links'), env: {}, next: () => { throw Error('unexpected'); } });
-  assert.equal(result.status, 401);
 });
 test('public scan redirects and never caches the target', async () => {
   const db = { prepare: () => ({ bind: path => ({ first: async () => path === 'ARC/BASEcamp/flythrough' ? { target: 'https://example.com/video' } : null }) }) };

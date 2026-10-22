@@ -36,7 +36,7 @@ function styleChoices(key, title, options) {
 function render() {
   const matches = state.links.filter(link => `${link.name} ${link.path} ${link.target}`.toLowerCase().includes(state.query.toLowerCase()));
   app.innerHTML = `<div class="shell ${state.panel ? 'panel-open' : ''}">
-    <main class="content"><div class="topbar"><div class="brand"><img class="brand-logo" src="/smartsoho-logo.svg" alt="Smart Soho"><span class="brand-product">Smart QR</span></div>${DEMO ? '' : '<form method="post" action="/admin/logout" class="signout"><button class="text-action" type="submit">Sign out</button></form>'}</div><div class="content-inner">
+    <main class="content"><div class="topbar"><div class="brand"><img class="brand-logo" src="/smartsoho-logo.svg" alt="Smart Soho"><span class="brand-product">Smart QR</span></div></div><div class="content-inner">
       ${DEMO ? '<div class="demo-note">Preview mode — changes are saved in this browser only.</div>' : ''}
       <header class="page-head"><div><h1>Your QR codes</h1><p>Create a code, then change its destination whenever you need to.</p></div><button class="button primary create-top" id="create">${plusIcon} Create QR code</button></header>
       <div class="list-tools"><label class="search"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Search QR codes" value="${esc(state.query)}" aria-label="Search QR codes"></label><span class="count">${matches.length} ${matches.length === 1 ? 'code' : 'codes'}</span></div>

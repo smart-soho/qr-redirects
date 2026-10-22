@@ -6,6 +6,8 @@
   "exclude": [
     "/",
     "/index.html",
+    "/admin",
+    "/admin/*",
     "/assets/*",
     "/smartsoho-logo.svg",
     "/favicon.ico"
