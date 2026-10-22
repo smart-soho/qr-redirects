@@ -1,0 +1,21 @@
+{
+  "name": "smart-qr-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "test": "node --test",
+    "db:migrate": "wrangler d1 migrations apply smartqr --remote",
+    "db:migrate:local": "wrangler d1 migrations apply smartqr --local"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

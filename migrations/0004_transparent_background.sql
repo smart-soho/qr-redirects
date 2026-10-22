@@ -1,0 +1,1 @@
+ALTER TABLE links ADD COLUMN transparent_background INTEGER NOT NULL DEFAULT 0;

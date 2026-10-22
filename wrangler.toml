@@ -1,0 +1,10 @@
+# Used by the Wrangler CLI for D1 migrations only. It deliberately has no pages_build_output_dir,
+# so Cloudflare Pages keeps using the bindings and variables set in the dashboard.
+name = "smartqr"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "smartqr"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
